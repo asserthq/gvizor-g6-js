@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Demo - Papa Parse</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, maximum-scale=1.0">
+		<meta name="theme-color" content="#ffffff">
+		<link rel="stylesheet" href="./resources/css/unsemantic.css">
+		<link rel="stylesheet" href="./resources/css/common.css">
+		<link rel="stylesheet" href="./resources/css/demo.css">
+		<script src="./resources/js/jquery.min.js"></script>
+		<script src="./resources/js/common.js"></script>
+		<script src="https://unpkg.com/papaparse@latest/papaparse.min.js"></script>
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/antv-g6/5.0.0-beta.37/g6.min.js" integrity="sha512-NKAGhn+VF3mZT1M21Qdw6zFlbax/SBXtRPtpeybMALqqovQQ2pnuDxkvfUEWeJvYCSgfg03BX0HBZ2XX59wAcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		
+		<script src="./resources/js/demo.js"></script>
+	</head>
+	<body>
+
+		<main>
+			<header>
+				<div class="grid-container">
+					<div class="grid-40 mobile-grid-50">
+						<div class="links">
+
+						</div>
+					</div>
+					<div class="grid-20 hide-on-mobile text-center">
+						<a href="/" class="text-logo">G-Vizor</a>
+					</div>
+					<div class="grid-40 mobile-grid-50 text-right">
+						<div class="links">
+							<a href="https://github.com/mholt/PapaParse">
+								<i class="fa fa-github fa-lg"></i> GitHub
+							</a>
+						</div>
+					</div>
+				</div>
+			</header>
+
+
+			<h1>Load an adjacency matrix</h1>
+
+			<div class="tabs">
+				<div class="tab active" id="tab-string">String</div>
+				<div class="tab" id="tab-local">Local File(s)</div>
+				<div class="tab" id="tab-remote">Remote File</div>
+				<!--<div class="tab" id="tab-unparse">JSON to CSV</div>-->
+			</div>
+
+			<div class="grid-container">
+
+				<div class="grid-25">
+					<label>
+						<input type="checkbox" id="stream"> Stream
+						<dfn>Results are delivered row by row to a step function. Use with large inputs that would crash the browser.</dfn>
+					</label>
+
+					<label>
+						<input type="checkbox" id="worker"> Worker thread
+						<dfn>Uses a separate thread so the web page doesn't lock up.</dfn>
+					</label>
+
+					<label>
+						<input type="checkbox" id="header"> Header row
+						<dfn>Keys data by field name rather than an array.</dfn>
+					</label>
+
+					<label>
+						<input type="checkbox" id="dynamicTyping"> Dynamic typing
+						<dfn>Turns numeric data into numbers and true/false into booleans.</dfn>
+					</label>
+
+					<label>
+						<input type="checkbox" id="skipEmptyLines"> Skip empty lines
+						<dfn>By default, empty lines are parsed; check to skip.</dfn>
+					</label>
+
+				</div>
+
+				<div class="grid-75 grid-parent">
+
+					<div class="grid-33 push-66">
+						<label>
+							Delimiter:<input type="text" size="4" maxlength="1" placeholder="auto" id="delimiter"><a href="javascript:" id="insert-tab">tab</a>
+							<dfn>The delimiting character. Usually comma or tab. Default is comma.</dfn>
+						</label>
+
+						<label>
+							Preview:<input type="number" min="0" max="1000" placeholder="0" id="preview">
+							<dfn>If &gt; 0, stops parsing after this many rows.</dfn>
+						</label>
+
+						<label>
+							Encoding:<input type="text" id="encoding" placeholder="default" size="7">
+							<dfn>Only applies when reading local files. Default is specified by the browser (usually UTF-8).</dfn>
+						</label>
+
+						<label>
+							Comment char:<input type="text" size="7" maxlength="10" placeholder="default" id="comments">
+							<dfn>If specified, skips lines starting with this string.</dfn>
+						</label>
+					</div>
+
+					<div class="grid-66 pull-33">
+						<div class="input-area" id="input-string">
+							<textarea id="input" placeholder="String input">
+Node 1,1,0,1,0
+Node 2,1,1,0,0
+Node 3,0,1,1,0
+Node 4,0,0,1,1</textarea>
+						</div>
+						<div class="input-area" id="input-local">
+							
+							<div class="text-center">
+								Choose one or more delimited text files for Papa to parse.
+							</div>
+
+							<input type="file" id="files" multiple>
+							
+							Sample files:
+
+							<ul>
+								<li>
+									<a href="/resources/files/normal.csv" id="local-normal-file">Normal file</a>
+								</li>
+								<li>
+									<a href="/resources/files/big.csv" id="local-large-file">Large file</a>
+								</li>
+								<li>
+									<a href="/resources/files/malformed.tsv" id="local-malformed-file">Malformed file</a>
+								</li>
+							</ul>
+						</div>
+						<div class="input-area" id="input-remote">
+							
+							<div class="text-center">
+								Type the URL of the file to be downloaded and parsed.
+								<br>
+								<small>(cross-origin requests require Access-Control-Allow-Origin header)</small>
+							</div>
+
+							<input type="text" id="url" placeholder="URL">
+
+							Sample files:
+
+							<ul>
+								<li>
+									<a href="javascript:" id="remote-normal-file">Normal file</a>
+								</li>
+								<li>
+									<a href="javascript:" id="remote-large-file">Large file</a>
+								</li>
+								<li>
+									<a href="javascript:" id="remote-malformed-file">Malformed file</a>
+								</li>
+							</ul>
+						</div>
+						<div class="input-area" id="input-unparse">
+							<textarea id="json" placeholder="JSON string">[
+	{
+	    "Node 1": 1,
+	    "Node 2": 0,
+	    "Node 3": 1,
+	    "Node 4": 0
+	},
+	{
+	    "Node 1": 1,
+	    "Node 2": 1,
+	    "Node 3": 0,
+	    "Node 4": 0
+	},
+	{
+	    "Node 1": 0,
+	    "Node 2": 1,
+	    "Node 3": 1,
+	    "Node 4": 0
+	},
+	{
+	    "Node 1": 0,
+	    "Node 2": 0,
+	    "Node 3": 1,
+	    "Node 4": 1
+	}
+]</textarea>
+						</div>
+						<div class="text-center">
+							<div class="see-results">
+								Results will appear below the green button
+							</div>
+							<button id="submit" class="green">Parse & Render</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<style>
+				#graph_container {
+					width: 60%;
+					min-width: 400px;
+					height: 800px;
+					border: 2px gray solid;
+				}
+				#graph_wrapper {
+					width: 100%;
+					display: flex;
+					align-items: top;
+					justify-content: center;
+				}
+			</style>
+			<div id="graph_wrapper">
+				<div id="graph_container">
+	
+				</div>
+			</div>
+
+		</main>
+
+
+
+		<footer>
+			<!--<div class="footer-top">
+				<h3>Make Your Papa Proud</h3>
+				<h4><a href="https://github.com/mholt/PapaParse">Star</a> and <a href="https://github.com/mholt/PapaParse/blob/gh-pages/resources/js/lovers.js">shout</a> if you love #PapaParse</h4>
+			</div>-->
+			<div class="footer-main">
+				<div class="grid-container">
+					<div class="grid-40 text-center">
+
+					</div>
+					<div class="grid-15 mobile-grid-50 links">
+						
+					</div>
+					<div class="grid-15 mobile-grid-50 links">
+						
+					</div>
+					<div class="clear hide-on-desktop"></div>
+					<div class="grid-15 mobile-grid-50 links">
+						
+					</div>
+					<div class="grid-15 mobile-grid-50 links">
+						
+					</div>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>
