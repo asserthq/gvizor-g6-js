@@ -310,11 +310,12 @@ function buildGraphDataWithHeaders(csvArr, headers) {
 
 	csvArr.forEach((rowObj, r) => {
 		Object.keys(rowObj).forEach((nodeTo, c) => {
-			if (c > 0 && r != c - 1 && rowObj[nodeTo] == '1')
-			data.edges.push({
-				source: data.nodes[r].id,
-				target: nodeTo
-			});
+			if (c > 0 && r != c - 1 && rowObj[nodeTo] == '1') {
+				data.edges.push({
+					source: data.nodes[r].id,
+					target: nodeTo
+				});
+			}
 		});
 	});
 
@@ -328,18 +329,32 @@ function buildGraphData(csvMat) {
 		edges: []
 	}
 
-	for(r = 0; r < csvMat.length; r++) {
+	for (r = 0; r < csvMat.length; r++) {
 		data.nodes.push({ id: csvMat[r][0], label: 'lll' });
 	}
 
-	for(r = 0; r < csvMat.length; r++) {
-		for(c = 1; c < csvMat[r].length; c++) {
-			if(r != (c - 1) && csvMat[r][c] == '1') {
-				data.edges.push({ 
-					source: csvMat[r][0],
-					target: csvMat[c - 1][0]
-				});
-			}
+	for (r = 0; r < csvMat.length; r++) {
+		for (c = 1; c < csvMat[r].length; c++) {
+			if (r != (c - 1)) {
+				let edge = {
+					style: {
+						startArrow: true,
+						lineWidth: 2
+					}
+				};
+				if (csvMat[r][c] > 0) {
+					edge.source = csvMat[r][0];
+					edge.target = csvMat[c - 1][0];
+					edge.style.stroke = "#ff0000";
+					data.edges.push(edge);
+					
+				} else if (csvMat[r][c] < 0) {
+					edge.source = csvMat[c - 1][0];
+					edge.target = csvMat[r][0];
+					edge.style.stroke = "#0000ff";
+					data.edges.push(edge);
+				}
+			} 
 		}
 	}
 
